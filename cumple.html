@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Isis</title>
+
+<!-- Tipografía decorativa para el saludo -->
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --bg1:#0f1020;
+    --purple:#7b3aed; --purple-dark:#5b21b6; --purple-light:#a78bfa;
+    --cream:#fff4d6; --wick:#333; --flame:#ffcf33; --flame2:#ff8a00;
+  }
+
+  html,body{
+    height:100%; margin:0;
+    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+    background: radial-gradient(1200px 600px at 50% 100%, #2b2258 0%, var(--bg1) 50%, #0b0b18 100%);
+    overflow: hidden; /* evita scroll por globos */
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .stage{
+    position:relative; width:100%; height:100%;
+    display:grid; place-items:center;
+    padding: clamp(8px, 2vw, 16px);
+  }
+
+  /* ====== Globos ====== */
+  .balloons{
+    position:absolute; inset:0; pointer-events:none; overflow:hidden;
+    animation: fadeOut 0.6s ease forwards; animation-delay: 4.2s;
+  }
+  .balloon{
+    --h: 0deg;
+    position:absolute; bottom:-20vh;
+    width: clamp(38px, 9vw, 72px);
+    height: clamp(50px, 12vw, 94px);
+    background: hsl(var(--h) 85% 60%);
+    border-radius: 50% 50% 45% 45% / 55% 55% 45% 45%;
+    box-shadow: inset -8px -14px 0 0 hsla(0,0%,100%,.18);
+    transform: translateX(-50%) scale(0.95);
+    will-change: transform, opacity;
+    animation: rise var(--rise,4.2s) ease-out forwards, wobble var(--wobble,3s) ease-in-out infinite;
+  }
+  .balloon::before{
+    content:""; position:absolute; bottom:-8px; left:50%; transform:translateX(-50%);
+    border:8px solid transparent; border-top-color: currentColor; filter: brightness(0.7);
+  }
+  .balloon::after{
+    content:""; position:absolute; bottom: calc(-1 * clamp(44px, 10vw, 78px));
+    left:50%; width:1.5px; height: clamp(44px, 10vw, 78px); background:#ddd; transform:translateX(-50%); opacity:.7;
+  }
+  @keyframes rise{ 0%{ transform: translate(-50%, 0) scale(0.95);} 100%{ transform: translate(-50%, -110vh) scale(1);} }
+  @keyframes wobble{ 0%{ margin-left:-6px;} 50%{ margin-left:6px;} 100%{ margin-left:-6px;} }
+  @keyframes fadeOut{ to{ opacity:0; visibility:hidden; } }
+
+  /* ====== Pastel ====== */
+  .cake-wrap{
+    opacity:0; transform: translateY(20px) scale(.98);
+    animation: cakeIn .9s cubic-bezier(.2,.9,.2,1) forwards; animation-delay: 4.4s;
+  }
+  @keyframes cakeIn{ to{ opacity:1; transform: translateY(0) scale(1);} }
+
+  .plate{
+    width: min(86vw, 540px); height: clamp(16px, 3vw, 26px); margin-inline:auto;
+    background: linear-gradient(#c7c7c7, #9f9f9f); border-radius: 999px;
+    box-shadow: 0 10px 30px rgba(0,0,0,.35), inset 0 2px 0 rgba(255,255,255,.4);
+    position:relative;
+  }
+  .cake{
+    position:relative; margin-inline:auto; width:min(78vw, 480px);
+    display:flex; flex-direction:column; align-items:center; gap: clamp(8px, 2vw, 16px);
+    translate: 0 calc(-1 * clamp(10px, 2vw, 14px));
+  }
+
+  .tier{
+    background: linear-gradient(180deg, var(--purple) 0%, var(--purple-dark) 100%);
+    border-radius: clamp(12px, 3vw, 20px); position:relative;
+    box-shadow: 0 14px 30px rgba(0,0,0,.35), inset 0 8px 12px rgba(255,255,255,.15);
+  }
+  .tier::after{
+    content:""; position:absolute; top:-12px; left:50%; transform:translateX(-50%);
+    width:90%; height: clamp(14px, 3vw, 22px);
+    background: linear-gradient(180deg, var(--purple-light), #c4b5fd);
+    border-radius:14px; box-shadow: 0 6px 8px rgba(0,0,0,.12);
+  }
+  .tier.striped{
+    background:
+      repeating-linear-gradient(135deg, rgba(255,255,255,.15) 0 14px, rgba(255,255,255,.06) 14px 28px),
+      linear-gradient(180deg, var(--purple) 0%, var(--purple-dark) 100%);
+  }
+
+  .tier.t1{ width:100%; height: clamp(86px, 18vw, 130px); }
+  .tier.t2{ width:72%;  height: clamp(66px, 14vw, 100px); }
+  .tier.t3{ width:46%;  height: clamp(52px, 11vw, 80px); }
+
+  /* ====== Velas (con número arriba) ====== */
+  .candles{
+    position:absolute;
+    top: calc(-1 * clamp(36px, 8vw, 52px));
+    left:50%;
+    transform: translateX(-50%);
+    height: clamp(36px, 8vw, 52px);
+    display:flex;
+    gap: clamp(12px, 3vw, 24px);
+    align-items:flex-end;   /* velas abajo, número arriba */
+    justify-content:center;
+  }
+
+  .candle{
+    position:relative;
+    width: clamp(8px, 2vw, 10px);
+    height: 70%;
+    background: repeating-linear-gradient(180deg, #ffe5ef 0 6px, #ffd0ea 6px 12px);
+    border-radius: 4px;
+    box-shadow: inset 0 -2px 0 rgba(0,0,0,.15);
+  }
+
+  .candle::before{
+    content:"";
+    position:absolute;
+    top:-6px;
+    left:50%;
+    width:2px;
+    height:8px;
+    background: var(--wick);
+    transform: translateX(-50%);
+    border-radius:1px;
+  }
+
+  .flame{
+    position:absolute;
+    top: calc(-1 * clamp(18px, 4vw, 24px));
+    left:50%;
+    width: clamp(12px, 3vw, 16px);
+    height: clamp(18px, 4vw, 24px);
+    transform: translateX(-50%);
+    background: radial-gradient(50% 60% at 50% 60%, var(--flame) 0%, var(--flame2) 60%, rgba(255,138,0,.05) 100%);
+    border-radius: 50% 50% 50% 50% / 70% 70% 30% 30%;
+    filter: drop-shadow(0 0 8px rgba(255,180,0,.9)) drop-shadow(0 0 16px rgba(255,140,0,.5));
+    animation: flicker .12s infinite alternate ease-in-out;
+    transform-origin: 50% 80%;
+  }
+  @keyframes flicker{
+    0% { transform: translateX(-50%) rotate(-3deg) scale(1); opacity:.95; }
+    100%{ transform: translateX(-50%) rotate(3deg)  scale(1.05); opacity:1; }
+  }
+
+  /* Número encima de las velas (dentro de .candles) */
+ .number{
+  position:absolute;
+  bottom: calc(20% + 19px); /* justo encima de las velas */
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: clamp(56px, 12vw, 140px);
+  font-weight: 800;
+  color: #fff;
+  text-shadow:
+    0 0 5px #fff,
+    0 0 10px hsl(272, 76%, 41%),
+    0 0 20px hsl(272, 76%, 41%),
+    0 0 40px hsl(272, 76%, 41%),
+    0 0 80px hsl(272, 76%, 41%);
+  letter-spacing: 4px;
+  opacity:0;
+  animation: fadeIn 0.9s ease forwards, neonGlow 1.5s ease-in-out infinite alternate;
+  animation-delay: 4.5s;
+  z-index: 2;
+  user-select:none;
+}
+
+/* Animación de brillo */
+@keyframes neonGlow {
+  from {
+    text-shadow:
+      0 0 5px #fff,
+      0 0 10px #ff00de,
+      0 0 20px #ff00de,
+      0 0 40px #ff00de,
+      0 0 80px #ff00de;
+  }
+  to {
+    text-shadow:
+      0 0 10px #fff,
+      0 0 20px #ff33f5,
+      0 0 40px #ff33f5,
+      0 0 80px #ff33f5,
+      0 0 160px #ff33f5;
+  }
+}
+  /* ====== Saludo abajo ====== */
+  .greeting{
+    font-family:'Pacifico', cursive;
+    font-size: clamp(28px, 8vw, 60px);
+    color:#fff4d6;
+    text-shadow: 0 3px 10px rgba(0,0,0,.7);
+    position:absolute;
+    bottom:8%;
+    width:100%;
+    text-align:center;
+    opacity:0;
+    animation: fadeIn 0.9s ease forwards;
+    animation-delay: 5.0s;
+    user-select:none;
+  }
+
+  @keyframes fadeIn{ to{opacity:1;} }
+
+  /* Botón Repetir */
+  .replay{
+    position: absolute; top:10px; right:10px;
+    font-size: clamp(14px, 3.5vw, 16px);
+    padding: clamp(8px, 2.5vw, 10px) clamp(12px, 4vw, 14px);
+    border-radius:999px; background:#ffffff0f; color:#eae9ff;
+    border:1px solid #ffffff2a; backdrop-filter: blur(6px);
+    cursor:pointer; transition:.2s ease;
+  }
+  .replay:active{ transform: scale(.98); }
+  .replay:hover{ background:#ffffff1f; }
+
+  /* Accesibilidad: reducir movimiento */
+  @media (prefers-reduced-motion: reduce){
+    .balloon, .balloons, .cake-wrap, .flame, .number, .greeting{ animation: none !important; opacity:1 !important; transform:none !important; }
+  }
+</style>
+</head>
+<body>
+  <div class="stage">
+    <!-- GLOBOS -->
+    <div class="balloons" id="balloons" aria-hidden="true"></div>
+
+    <!-- PASTEL -->
+    <div class="cake-wrap" id="cake" role="img" aria-label="Pastel morado de 3 pisos con 3 velitas encendidas">
+      <div class="cake">
+        <div class="tier t3 striped">
+          <div class="candles">
+            <!-- NÚMERO ARRIBA DE LAS VELAS -->
+            <div class="number" aria-hidden="true">29</div>
+
+            <div class="candle"><span class="flame"></span></div>
+            <div class="candle"><span class="flame"></span></div>
+            <div class="candle"><span class="flame"></span></div>
+          </div>
+        </div>
+        <div class="tier t2"></div>
+        <div class="tier t1 striped"></div>
+      </div>
+      <div class="plate" aria-hidden="true"></div>
+    </div>
+
+    <!-- SALUDO ABAJO -->
+    <div class="greeting" aria-label="Feliz Cumpleaños Isis">Feliz Cumpleaños Isis</div>
+
+    <!-- Botón para repetir animación -->
+    <button class="replay" id="replay" aria-label="Repetir animación">Repetir</button>
+  </div>
+
+<script>
+  // ====== Crear globos (muchos y responsive) ======
+  function makeBalloons(container){
+    const colors = [0, 15, 200, 280, 330, 120, 35, 190, 260]; // tonos HSL
+    const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
+    const vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
+
+    // Densidad: 1 globo cada ~35,000 px²; límites para no exagerar
+    const count = Math.min(70, Math.max(22, Math.round((vw * vh) / 35000)));
+
+    for(let i=0; i<count; i++){
+      const b = document.createElement('div');
+      b.className = 'balloon';
+      b.style.setProperty('--h', (colors[i % colors.length]) + 'deg');
+
+      // Posición y tiempos aleatorios
+      const left = (Math.random() * 90 + 5); // 5% a 95% del ancho
+      const delay = (Math.random() * 1.2);  // inicia desfasado
+      const rise = (3.6 + Math.random() * 1.8).toFixed(2) + 's';
+      const wobble = (2.4 + Math.random() * 2.6).toFixed(2) + 's';
+
+      b.style.left = left + 'vw';
+      b.style.setProperty('--rise', rise);
+      b.style.setProperty('--wobble', wobble);
+      b.style.animationDelay = delay + 's, ' + delay + 's';
+      container.appendChild(b);
+    }
+  }
+
+  const balloonsEl = document.getElementById('balloons');
+  makeBalloons(balloonsEl);
+
+  // ====== Botón Repetir ======
+  document.getElementById('replay').addEventListener('click', () => {
+    const balloons = balloonsEl;
+    const cake = document.getElementById('cake');
+    const number = document.querySelector('.number');
+    const greeting = document.querySelector('.greeting');
+
+    // Quita animaciones actuales
+    [balloons, cake, number, greeting].forEach(el => el && (el.style.animation = 'none'));
+
+    // reflow
+    void balloons.offsetHeight; void cake.offsetHeight;
+
+    // Recrea globos con nuevas posiciones/tiempos
+    balloons.innerHTML = '';
+    makeBalloons(balloons);
+
+    // Restablece estados y re-aplica animaciones
+    requestAnimationFrame(() => {
+      balloons.style.animation = 'fadeOut 0.6s ease forwards';
+      balloons.style.animationDelay = '4.2s';
+
+      cake.style.opacity = '0';
+      cake.style.transform = 'translateY(20px) scale(.98)';
+      cake.style.animation = 'cakeIn .9s cubic-bezier(.2,.9,.2,1) forwards';
+      cake.style.animationDelay = '4.4s';
+
+      number.style.opacity = '0';
+      number.style.animation = 'fadeIn 0.9s ease forwards';
+      number.style.animationDelay = '4.5s';
+
+      greeting.style.opacity = '0';
+      greeting.style.animation = 'fadeIn 0.9s ease forwards';
+      greeting.style.animationDelay = '5.0s';
+    });
+  });
+
+  // Evita gestos de scroll accidental en iOS al tocar (página a pantalla completa)
+  window.addEventListener('touchmove', (e)=>{ e.preventDefault(); }, {passive:false});
+</script>
+</body>
+</html>
